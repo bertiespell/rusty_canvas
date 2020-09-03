@@ -3,7 +3,7 @@ use std::io;
 use std::io::prelude::*;
 
 /// temporary location for global canvas
-const CANVAS: &'static str = "canvasData.txt";
+const CANVAS: &'static str = "canvas_data.txt";
 
 /// Given a previous canvas and a draw command, return a new updated canvas state
 pub fn apply_draw_command(previous_state_canvas: &super::canvas::Canvas, command:&super::commands::DrawRectangleCommand) -> super::canvas::Canvas {
@@ -50,9 +50,10 @@ mod tests {
 
         let actual = second_canvas.to_string();
 
-        let expected = "
-
-
+        let expected =
+        "                    
+                             
+                             
         @@@@@
         @XXX@  XXXXXXXXXXXXXX
         @@@@@  XOOOOOOOOOOOOX
