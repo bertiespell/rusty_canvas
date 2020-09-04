@@ -33,7 +33,7 @@ impl Canvas {
                 width: width,
                 height: height,
             },
-            pixels: vec![vec![Pixel{ occupied: false, character: ' '}; height as usize]; width as usize]
+            pixels: vec![vec![Pixel{ occupied: false, character: ' '}; width as usize]; height as usize]
         };
 
         return canvas;
@@ -61,7 +61,7 @@ mod tests {
 
     #[test]
     fn test_new_canvas() {
-        let actual = canvas::Canvas::new(9, 21).to_string();
+        let actual = canvas::Canvas::new(21, 9).to_string();
         let expected = "                     \n                     \n                     \n                     \n                     \n                     \n                     \n                     \n                     \n";
 
         assert_eq!(expected, actual);
