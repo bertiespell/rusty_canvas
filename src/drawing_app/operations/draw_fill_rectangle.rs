@@ -29,9 +29,9 @@ mod tests {
 
         assert_eq!(expected, &actual.to_string());
         assert_eq!(actual.pixels[3][3].occupied, false);
-        assert_eq!(actual.pixels[3][3].character, " ");
+        assert_eq!(actual.pixels[3][3].character, ' ');
         assert_eq!(actual.pixels[3][4].occupied, true);
-        assert_eq!(actual.pixels[3][4].character, "X");
+        assert_eq!(actual.pixels[3][4].character, 'X');
     }
 
     fn test_width_out_of_bounds() {
@@ -196,7 +196,7 @@ mod tests {
         assert_eq!(expected, &actual.to_string());
     }
 
-    fn test_position_empty() {
+    fn test_dimensions_empty() {
         // for now, we'll do nothing if no dimensions is present (no dimensions == no rectangle)
         // or we could throw...
         // or we could beef out our return type, with an "error" or "notice" field, using a monad, so that we could chain together operations even if one of them is potentially erroneous

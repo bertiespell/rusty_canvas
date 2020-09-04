@@ -15,15 +15,15 @@ pub struct Dimensions {
 /// Data structure to represent the canvas
 #[derive(Clone, Debug)]
 pub struct Canvas {
-    dimensions: Dimensions,
-    pixels: Vec<Vec<Pixel>>,
+    pub dimensions: Dimensions,
+    pub pixels: Vec<Vec<Pixel>>,
 }
 
 /// Each pixel represents one space on the canvas
 #[derive(Clone, Copy, Debug)]
 pub struct Pixel {
-    occupied: bool,
-    character: char, // for strictly ASCII we could use a u8 here. Char gives us Unicode which is fun 😉
+    pub occupied: bool,
+    pub character: char, // for strictly ASCII we could use a u8 here. Char gives us Unicode which is fun 😉
 }
 
 impl Canvas {
