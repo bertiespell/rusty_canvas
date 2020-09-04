@@ -28,6 +28,10 @@ mod tests {
         let expected = "          \n          \n          \n    XXX   \n    XXX   \n    XXX   \n          \n          \n";
 
         assert_eq!(expected, &actual.to_string());
+        assert_eq!(actual.pixels[3][3].occupied, false);
+        assert_eq!(actual.pixels[3][3].character, " ");
+        assert_eq!(actual.pixels[3][4].occupied, true);
+        assert_eq!(actual.pixels[3][4].character, "X");
     }
 
     fn test_width_out_of_bounds() {
