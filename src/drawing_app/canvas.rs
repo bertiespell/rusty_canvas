@@ -23,7 +23,7 @@ pub struct Canvas {
 #[derive(Clone, Copy, Debug)]
 pub struct Pixel {
     occupied: bool,
-    character: char, // for strictly ASCII we could use a u8 here. Char gives us Unicode which is fun  😉
+    character: char, // for strictly ASCII we could use a u8 here. Char gives us Unicode which is fun 😉
 }
 
 impl Canvas {

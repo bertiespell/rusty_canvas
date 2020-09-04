@@ -2,6 +2,8 @@ use std::fs::File;
 use std::io;
 use std::io::prelude::*;
 use super::commands::CommandName;
+use super::operations;
+
 
 /// temporary location for global canvas
 const CANVAS: &'static str = "canvas_data.txt";
@@ -15,32 +17,11 @@ pub fn apply_draw_commands(
         .iter()
         .fold(previous_state_canvas.clone(), |previous_canvas, command| {
             match command.name {
-                CommandName::FillRectangle => draw_fill_rectangle(&previous_canvas, command),
-                CommandName::OutlineRectangle => draw_outline_rectangle(&previous_canvas, command),
-                CommandName::FloodFill => draw_flood_fill_rectangle(&previous_canvas, command),
+                CommandName::FillRectangle => operations::draw_fill_rectangle::execute(&previous_canvas, command),
+                CommandName::OutlineRectangle => operations::draw_outline_rectangle::execute(&previous_canvas, command),
+                CommandName::FloodFill => operations::draw_flood_fill_rectangle::execute(&previous_canvas, command),
             }
         })
-}
-
-pub fn draw_fill_rectangle(
-    previous_state_canvas: &super::canvas::Canvas, 
-    command: &super::commands::DrawCommand
-) -> super::canvas::Canvas {
-    unimplemented!();
-}
-
-pub fn draw_outline_rectangle(
-    previous_state_canvas: &super::canvas::Canvas, 
-    command: &super::commands::DrawCommand
-) -> super::canvas::Canvas {
-    unimplemented!();
-}
-
-pub fn draw_flood_fill_rectangle(
-    previous_state_canvas: &super::canvas::Canvas, 
-    command: &super::commands::DrawCommand
-) -> super::canvas::Canvas {
-    unimplemented!();
 }
 
 pub fn update_canvas(ascii: &str) -> io::Result<()> {
