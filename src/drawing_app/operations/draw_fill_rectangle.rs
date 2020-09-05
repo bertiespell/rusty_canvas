@@ -1,5 +1,6 @@
 use super::super::canvas;
 use super::super::commands;
+use super::utils;
 
 /// Executes a FillRectangle command and returns a new canvas with the changes
 pub fn execute(
@@ -8,8 +9,8 @@ pub fn execute(
 ) -> canvas::Canvas {
     match command.clone().dimensions {
         Some(dimensions) => {
-            if rectangle_size_is_none_zero(&dimensions) {
-                return update_pixels(previous_state_canvas, &dimensions, command);
+            if utils::rectangle_size_is_none_zero(&dimensions) {
+                return fill_rectangle(previous_state_canvas, &dimensions, command);
             }
             previous_state_canvas.clone()
         },
@@ -20,7 +21,7 @@ pub fn execute(
 }
 
 /// Searches a canvas for the pixels to be updated, returns a new canvas with the changes
-fn update_pixels(
+fn fill_rectangle(
     previous_state_canvas: &canvas::Canvas, 
     dimensions: &canvas::Dimensions,
     command: &commands::DrawCommand
@@ -61,21 +62,7 @@ fn pixel_should_change(
     row_index: i32,
     column_index: i32
 ) -> bool {
-    index_is_in_bound(column_index, start_point.x, dimensions.width ) && index_is_in_bound(row_index, start_point.y, dimensions.height)
-}
-
-/// Determine whether an index occurs within a specific range
-fn index_is_in_bound(
-    index: i32,
-    start: i32, 
-    length: i32,
-) -> bool {
-    index >= start && index < length  + start
-}
-
-/// Determine whether the dimensionality is none 0
-fn rectangle_size_is_none_zero(dimensions: &canvas::Dimensions) -> bool {
-    dimensions.width > 0 && dimensions.height > 0
+    utils::index_is_in_bound(column_index, start_point.x, dimensions.width ) && utils::index_is_in_bound(row_index, start_point.y, dimensions.height)
 }
 
 #[cfg(test)]

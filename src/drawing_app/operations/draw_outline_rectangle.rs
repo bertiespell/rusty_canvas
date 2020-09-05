@@ -1,5 +1,6 @@
 use super::super::canvas;
 use super::super::commands;
+use super::utils;
 
 /// Executes an OutlineRectangle command and returns a new canvas with the changes
 pub fn execute(
@@ -8,8 +9,8 @@ pub fn execute(
 ) -> canvas::Canvas {
     match command.clone().dimensions {
         Some(dimensions) => {
-            if rectangle_size_is_none_zero(&dimensions) {
-                return update_pixels(previous_state_canvas, &dimensions, command);
+            if utils::rectangle_size_is_none_zero(&dimensions) {
+                return draw_outline(previous_state_canvas, &dimensions, command);
             }
             previous_state_canvas.clone()
         },
@@ -20,7 +21,7 @@ pub fn execute(
 }
 
 /// Searches a canvas for the pixels to be updated, returns a new canvas with the changes
-fn update_pixels(
+fn draw_outline(
     previous_state_canvas: &canvas::Canvas,
     dimensions: &canvas::Dimensions,
     command: &commands::DrawCommand,
@@ -35,15 +36,13 @@ fn update_pixels(
                 .iter()
                 .enumerate()
                 .map(|(column_index, pixel)| {
-                    if pixel_should_change(
+                    if utils::is_edge(
                         dimensions,
                         &command.position, 
                         row_index as i32, 
                         column_index as i32
                     ) {
                         new_canvas.pixels[row_index][column_index] = command.character;
-                    } else {
-                        new_canvas.pixels[row_index][column_index] = pixel.clone()
                     }
                 })
                 .collect::<Vec<_>>()
@@ -51,52 +50,6 @@ fn update_pixels(
         .collect::<Vec<_>>();
 
         new_canvas
-}
-
-/// Given a rectangle with specific dimensions and start point:
-/// Deterime whether a pixel at [row_index, column_index] should be updated
-fn pixel_should_change(
-    dimensions: &canvas::Dimensions,
-    start_point: &canvas::Point,
-    row_index: i32,
-    column_index: i32,
-) -> bool {
-    is_row_edge(dimensions, start_point, row_index, column_index) || is_column_edge(dimensions, start_point, row_index, column_index)
-}
-
-fn is_row_edge(
-    dimensions: &canvas::Dimensions,
-    start_point: &canvas::Point,
-    row_index: i32,
-    column_index: i32,
-) -> bool {
-    is_edge(dimensions.width , dimensions.height, start_point.y, start_point.x, row_index, column_index)
-}
-
-fn is_column_edge(
-    dimensions: &canvas::Dimensions,
-    start_point: &canvas::Point,
-    row_index: i32,
-    column_index: i32,
-) -> bool {
-    is_edge(dimensions.height , dimensions.width, start_point.x, start_point.y, column_index, row_index)
-}
-
-fn is_edge(
-    width: i32,
-    height: i32,
-    start_point: i32,
-    end_point: i32,
-    corner_x: i32,
-    corner_y: i32,
-) -> bool {
-    (corner_x == start_point ||corner_x == start_point + height - 1) &&
-    (corner_y >= end_point && corner_y <= end_point + width - 1)
-}
-
-/// Determine whether the dimensionality is none 0
-fn rectangle_size_is_none_zero(dimensions: &canvas::Dimensions) -> bool {
-    dimensions.width > 0 && dimensions.height > 0
 }
 
 #[cfg(test)]
