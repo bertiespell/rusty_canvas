@@ -25,9 +25,9 @@ impl DrawCommand {
     ) -> DrawCommand {
         DrawCommand {
             name: command_name,
-            position: position,
+            position,
             dimensions,
-            character: character,
+            character,
         }
     }
 }
