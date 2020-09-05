@@ -70,7 +70,7 @@ mod tests {
         };
 
         let fourth_command: commands::DrawCommand = commands::DrawCommand {
-            name: commands::CommandName::FillRectangle,
+            name: commands::CommandName::OutlineRectangle,
             position: canvas::Point {x: 10, y: 3},
             dimensions: Some(canvas::Dimensions {
                 width: 14,
@@ -83,19 +83,122 @@ mod tests {
 
         let actual = canvas.to_string();
 
-        let expected =
-        "                    
-                             
-                             
-        @@@@@
-        @XXX@  XXXXXXXXXXXXXX
-        @@@@@  XOOOOOOOOOOOOX
-               XOOOOOOOOOOOOX
-               XOOOOOOOOOOOOX
-               XOOOOOOOOOOOOX
-               XXXXXXXXXXXXXX
-        ";
-        
+        let expected = "                        \n                        \n   @@@@@                \n   @XXX@  XXXXXXXXXXXXXX\n   @@@@@  XOOOOOOOOOOOOX\n          XOOOOOOOOOOOOX\n          XOOOOOOOOOOOOX\n          XOOOOOOOOOOOOX\n          XXXXXXXXXXXXXX\n";
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_multiple_commands() {
+        let canvas: canvas::Canvas = canvas::Canvas::new(21, 8);
+
+        let first_command: commands::DrawCommand = commands::DrawCommand {
+            name: commands::CommandName::FillRectangle,
+            position: canvas::Point{x: 14, y: 0},
+            dimensions: Some(canvas::Dimensions {
+                width: 7,
+                height: 6
+            }),
+            character: '.',
+        };
+
+        let second_command: commands::DrawCommand = commands::DrawCommand {
+            name: commands::CommandName::FillRectangle,
+            position: canvas::Point {x: 0, y: 3},
+            dimensions: Some(canvas::Dimensions {
+                width: 8,
+                height: 4
+            }),
+            character: ' ',
+        };
+
+        let third_command: commands::DrawCommand = commands::DrawCommand {
+            name: commands::CommandName::OutlineRectangle,
+            position: canvas::Point {x: 0, y: 3},
+            dimensions: Some(canvas::Dimensions {
+                width: 8,
+                height: 4
+            }),
+            character: 'O',
+        };
+
+        let fourth_command: commands::DrawCommand = commands::DrawCommand {
+            name: commands::CommandName::FillRectangle,
+            position: canvas::Point {x: 5, y: 5},
+            dimensions: Some(canvas::Dimensions {
+                width: 5,
+                height: 3
+            }),
+            character: 'X'
+        };
+
+        let canvas = apply_draw_commands(&canvas, vec!(first_command, second_command, third_command, fourth_command));
+
+        let actual = canvas.to_string();
+
+        let expected = "              .......\n              .......\n              .......\nOOOOOOOO      .......\nO      O      .......\nO    XXXXX    .......\nOOOOOXXXXX           \n     XXXXX           \n";
+
+        assert_eq!(expected, actual);
+
+    }
+
+    #[test]
+    fn test_multiple_with_flood_fill_commands() {
+        let canvas: canvas::Canvas = canvas::Canvas::new(21, 8);
+
+        let first_command: commands::DrawCommand = commands::DrawCommand {
+            name: commands::CommandName::FillRectangle,
+            position: canvas::Point{x: 14, y: 0},
+            dimensions: Some(canvas::Dimensions {
+                width: 7,
+                height: 6
+            }),
+            character: '.',
+        };
+
+        let second_command: commands::DrawCommand = commands::DrawCommand {
+            name: commands::CommandName::FillRectangle,
+            position: canvas::Point {x: 0, y: 3},
+            dimensions: Some(canvas::Dimensions {
+                width: 8,
+                height: 4
+            }),
+            character: ' ',
+        };
+
+        let third_command: commands::DrawCommand = commands::DrawCommand {
+            name: commands::CommandName::OutlineRectangle,
+            position: canvas::Point {x: 0, y: 3},
+            dimensions: Some(canvas::Dimensions {
+                width: 8,
+                height: 4
+            }),
+            character: 'O',
+        };
+
+        let fourth_command: commands::DrawCommand = commands::DrawCommand {
+            name: commands::CommandName::FillRectangle,
+            position: canvas::Point {x: 5, y: 5},
+            dimensions: Some(canvas::Dimensions {
+                width: 5,
+                height: 3
+            }),
+            character: 'X'
+        };
+
+        let fifth_command: commands::DrawCommand = commands::DrawCommand {
+            name: commands::CommandName::FloodFill,
+            position: canvas::Point {x: 0, y: 0},
+            dimensions: None,
+            character: '-'
+        };
+
+        let canvas = apply_draw_commands(&canvas, vec!(first_command, second_command, third_command, fourth_command, fifth_command));
+
+        let actual = canvas.to_string();
+
+        let expected = "--------------.......\n--------------.......\n--------------.......\nOOOOOOOO------.......\nO      O------.......\nO    XXXXX----.......\nOOOOOXXXXX-----------\n     XXXXX-----------\n";
+
         assert_eq!(expected, actual);
     }
 }

@@ -16,14 +16,7 @@ pub struct Dimensions {
 #[derive(Clone, Debug)]
 pub struct Canvas {
     pub dimensions: Dimensions,
-    pub pixels: Vec<Vec<Pixel>>,
-}
-
-/// Each pixel represents one space on the canvas
-#[derive(Clone, Copy, Debug)]
-pub struct Pixel {
-    pub occupied: bool,
-    pub character: char, // for strictly ASCII we could use a u8 here. Char gives us Unicode which is fun 😉
+    pub pixels: Vec<Vec<char>>, // for strictly ASCII we could use a u8 here. Char gives us Unicode which is fun 😉
 }
 
 impl Canvas {
@@ -33,7 +26,7 @@ impl Canvas {
                 width: width,
                 height: height,
             },
-            pixels: vec![vec![Pixel{ occupied: false, character: ' '}; width as usize]; height as usize]
+            pixels: vec![vec![' '; width as usize]; height as usize]
         };
 
         return canvas;
@@ -45,9 +38,6 @@ impl Canvas {
             .map(|row| {
                 row
                     .iter()
-                    .map(|pixel| {
-                        pixel.character
-                    })
                     .collect::<String>()
             })
             .fold(String::new(), |a, b| a + &b + "\n")

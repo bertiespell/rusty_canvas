@@ -41,10 +41,7 @@ fn update_pixels(
                         row_index as i32, 
                         column_index as i32
                     ) {
-                        new_canvas.pixels[row_index][column_index] = canvas::Pixel {
-                            occupied: true,
-                            character: command.character
-                        }
+                        new_canvas.pixels[row_index][column_index] = command.character;
                     } else {
                         new_canvas.pixels[row_index][column_index] = pixel.clone()
                     }
@@ -103,10 +100,8 @@ mod tests {
         let expected = "          \n          \n          \n    XXX   \n    XXX   \n    XXX   \n    XXX   \n          \n";
 
         assert_eq!(expected, &actual.to_string());
-        assert_eq!(actual.pixels[3][3].occupied, false);
-        assert_eq!(actual.pixels[3][3].character, ' ');
-        assert_eq!(actual.pixels[3][4].occupied, true);
-        assert_eq!(actual.pixels[3][4].character, 'X');
+        assert_eq!(actual.pixels[3][3], ' ');
+        assert_eq!(actual.pixels[3][4], 'X');
     }
 
     #[test]
