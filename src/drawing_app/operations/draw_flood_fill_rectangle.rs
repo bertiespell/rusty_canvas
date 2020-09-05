@@ -1,12 +1,73 @@
 use super::super::canvas;
 use super::super::commands;
+use super::utils;
 
 /// Executes a FloodFill command and returns a new canvas with the changes
 pub fn execute(
-    previous_state_canvas: &super::super::canvas::Canvas,
-    command: &super::super::commands::DrawCommand
-) -> super::super::canvas::Canvas {
-    unimplemented!();
+    previous_state_canvas: &canvas::Canvas,
+    command: &commands::DrawCommand
+) -> canvas::Canvas {
+    let mut new_canvas = previous_state_canvas.clone();
+    if utils::position_is_on_canvas(&new_canvas, &command.position) {
+        let current_character = utils::get_canvas_pixel(&new_canvas, &command.position);
+        flood_fill(
+            &mut new_canvas,
+            &command.position,
+            current_character,
+            command.character,
+        ); 
+    }
+    return new_canvas;
+   
+}
+
+/// Flood Fill Algorithm
+/// Recursively searches the canvas for the current character, 
+/// changing it to the desired flood fill character.
+/// Moves up, down, left, right - mutating canvas as it goes
+pub fn flood_fill(
+    canvas: &mut canvas::Canvas,
+    position: &canvas::Point,
+    current_character: char,
+    flood_fill_character: char, 
+) {
+    if !utils::position_is_on_canvas(canvas, &position) {
+        return;
+    }
+    if utils::get_canvas_pixel(canvas, &position) != current_character {
+        return;
+    }
+    if utils::get_canvas_pixel(canvas, &position) == flood_fill_character {
+        return;
+    }
+
+    canvas.pixels[position.y as usize][position.x as usize] = flood_fill_character;
+
+    // move up, down, left, right recursively
+    flood_fill(
+        canvas,
+        &canvas::Point{ x: position.x, y: position.y + 1 }, 
+        current_character, 
+        flood_fill_character
+    );
+    flood_fill(
+        canvas,
+        &canvas::Point{ x: position.x, y: position.y - 1 }, 
+        current_character, 
+        flood_fill_character
+    );
+    flood_fill(
+        canvas,
+        &canvas::Point{ x: position.x + 1, y: position.y }, 
+        current_character, 
+        flood_fill_character
+    ); 
+    flood_fill(
+        canvas,
+        &canvas::Point{ x: position.x - 1, y: position.y }, 
+        current_character, 
+        flood_fill_character
+    );
 }
 
 #[cfg(test)]

@@ -4,7 +4,6 @@ use std::io::prelude::*;
 use super::commands::CommandName;
 use super::operations;
 
-
 /// temporary location for global canvas
 const CANVAS: &'static str = "canvas_data.txt";
 
