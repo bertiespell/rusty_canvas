@@ -79,7 +79,7 @@ mod tests {
     #[test]
     fn test_simple_flood_fill_operation() {
         // simple rectangle draw operation - should fill all space betewen two squares with space between them
-        let canvas = canvas::Canvas::new(8, 9);
+        let canvas = canvas::Canvas::blank_canvas(8, 9, ' ');
         let first_command: commands::DrawCommand = commands::DrawCommand {
             name: commands::CommandName::FillRectangle,
             position: canvas::Point {x:0, y: 5},
@@ -119,7 +119,7 @@ mod tests {
     #[test]
     fn test_fill_already_existing_rectangle() {
         // should replace the characters in a rectangle with new fill operator
-        let canvas = canvas::Canvas::new(8, 9);
+        let canvas = canvas::Canvas::blank_canvas(8, 9, ' ');
         let first_command: commands::DrawCommand = commands::DrawCommand {
             name: commands::CommandName::FillRectangle,
             position: canvas::Point {x:0, y: 5},
@@ -148,7 +148,7 @@ mod tests {
     #[test]
     fn test_rectangles_touching_at_corners_shouldnt_fill() {
         // when two corners are touching at the edge, the other rectangle isn't filled
-        let canvas = canvas::Canvas::new(8, 9);
+        let canvas = canvas::Canvas::blank_canvas(8, 9, ' ');
         let first_command: commands::DrawCommand = commands::DrawCommand {
             name: commands::CommandName::FillRectangle,
             position: canvas::Point {x:0, y: 5},
@@ -186,7 +186,7 @@ mod tests {
 
     #[test]
     fn test_complex_flood_fill_commands() {
-        let canvas: canvas::Canvas = canvas::Canvas::new(21, 8);
+        let canvas: canvas::Canvas = canvas::Canvas::blank_canvas(21, 8, ' ');
 
         let first_command: commands::DrawCommand = commands::DrawCommand {
             name: commands::CommandName::FillRectangle,
@@ -250,7 +250,7 @@ mod tests {
     #[test]
     fn test_out_of_bounds() {
         // do nothing when either x or y is out of bounds
-        let canvas = canvas::Canvas::new(8, 9);
+        let canvas = canvas::Canvas::blank_canvas(8, 9, ' ');
         let first_command: commands::DrawCommand = commands::DrawCommand {
             name: commands::CommandName::FillRectangle,
             position: canvas::Point {x:0, y: 5},
