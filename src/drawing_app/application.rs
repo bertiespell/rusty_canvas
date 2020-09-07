@@ -20,7 +20,7 @@ pub struct DrawingApplication {
 impl DrawingApplication {
     /// Entry-point to the application
     /// Sets initial application variabls
-    pub fn new(options: ApplicationOptions) -> DrawingApplication {
+    pub fn initialize(options: ApplicationOptions) -> DrawingApplication {
         DrawingApplication {
             options,
         }

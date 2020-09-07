@@ -1,6 +1,10 @@
+mod server;
 mod drawing_app;
 
-use drawing_app::{application, canvas, commands};
+use parking_lot::RwLock;
+use std::sync::Arc;
+use drawing_app::{application};
+use server::{server as serverApp};
 
 // TODO: configure via env variables or command line arguments
 const CANVAS: &'static str = "canvas_data.txt";
@@ -9,8 +13,9 @@ const CANVAS_WIDTH: i32 = 10;
 const CANVAS_HEIGHT: i32 = 10;
 const BLANK_CHARACTER: char = '⬛';
 
-fn main() {
-    let app = application::DrawingApplication::new(
+#[tokio::main]
+async fn main() {
+    let app = Arc::new(RwLock::new(application::DrawingApplication::initialize(
         application::ApplicationOptions {
             width: CANVAS_WIDTH,
             height: CANVAS_HEIGHT,
@@ -18,28 +23,7 @@ fn main() {
             canvas_path: String::from(CANVAS),
             canvas_temp_path: String::from(TEMP_CANVAS),
         }
-    );
+    )));
 
-    // test palette: 🟥🟧🟨🟩🟦🟪🟫⬛⬜
-    let command: commands::DrawCommand = commands::DrawCommand {
-        name: commands::CommandName::FillRectangle,
-        position: canvas::Point{ x: 2, y: 2 },
-        dimensions: Some(canvas::Dimensions {
-            width: 4,
-            height: 3
-        }),
-        character: '🟪',
-    };
-
-    let canvas = app.draw(vec!(command));
-
-    match canvas {
-        Ok(canvas) => {
-            let painted_canvas = canvas.to_string();
-            println!("{}", painted_canvas);
-        },
-        Err(err) => {
-            println!("Error running canvas application: {}", err);
-        }
-    }
+    serverApp::run(app).await
 }
