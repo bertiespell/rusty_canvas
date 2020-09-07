@@ -20,7 +20,7 @@ pub fn apply_draw_operation(
         Ok(canvas) => {
             Ok(warp::reply::with_status(
                 canvas.to_string(),
-                http::StatusCode::CREATED,
+                http::StatusCode::OK,
             ))
         },
         Err(_) => Err(warp::reject::custom(errors::ApplyOperationError))
@@ -37,6 +37,29 @@ pub fn parse_draw_rectangle_request() -> impl Filter<Extract = (request::DrawRec
 /// Rejects big payloads
 pub fn parse_flood_fill_request() -> impl Filter<Extract = (request::FloodFillOperation,), Error = warp::Rejection> + Clone {
     warp::body::content_length_limit(1024 * 16).and(warp::body::json())
+}
+
+/// Parse the operation's outline or fill character
+/// Matches against either "none", or a single character
+/// Converts "none" to the canvas' blank character
+pub fn parse_character(
+    request_character: String,
+    blank_character: char,
+) -> Result<char, warp::Rejection> {
+    let fill_string = request_character.to_ascii_lowercase();
+
+    match fill_string {
+        fill_string if fill_string == request::NONE_CHARACTER.to_owned() => Ok(blank_character),
+        _ => {
+            if fill_string.len() > 1 {
+                return Err(warp::reject::custom(errors::CharacterTooLong));
+            }
+            match request_character.chars().next() {
+                Some(fill_char) => Ok(fill_char),
+                None => Err(warp::reject::custom(errors::CharacterDecodeError)),
+            }
+        }
+    }
 }
 
 /// Constructs a valid HTML element out of the canvas

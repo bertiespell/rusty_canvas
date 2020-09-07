@@ -16,3 +16,4 @@ hyper = "0.13"
 parking_lot = "0.11.0"
 futures-util = "0.3.5"
 futures = { version = "0.3", default-features = false }
+uuid = { version = "0.8.1", features = ["v4"] }

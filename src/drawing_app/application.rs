@@ -16,15 +16,15 @@ pub struct ApplicationOptions {
 
 #[derive(Clone)]
 pub struct DrawingApplication {
-    options: ApplicationOptions,
+    config: ApplicationOptions,
 }
 
 impl DrawingApplication {
     /// Entry-point to the application
     /// Sets initial application variabls
-    pub fn initialize(options: ApplicationOptions) -> DrawingApplication {
+    pub fn initialize(config: ApplicationOptions) -> DrawingApplication {
         DrawingApplication {
-            options,
+            config,
         }
     }
 
@@ -38,7 +38,7 @@ impl DrawingApplication {
             .read(true)
             .write(true)
             .create(true)
-            .open(&self.options.canvas_path);
+            .open(&self.config.canvas_path);
         
         match file {
             Ok(mut file) => {
@@ -50,9 +50,9 @@ impl DrawingApplication {
 
                 if contents.is_empty() {
                     canvas = super::canvas::Canvas::blank_canvas(
-                        self.options.width, 
-                        self.options.height,
-                        self.options.blank_character,
+                        self.config.width, 
+                        self.config.height,
+                        self.config.blank_character,
                     );
                 } else {
                     canvas = super::canvas::Canvas::from_chars(
@@ -64,8 +64,8 @@ impl DrawingApplication {
                                     .collect()
                             })
                             .collect(),
-                        self.options.width, 
-                        self.options.height,
+                        self.config.width, 
+                        self.config.height,
                     );
                 }
             
@@ -74,16 +74,16 @@ impl DrawingApplication {
                 let temp_file = OpenOptions::new()
                     .write(true)
                     .create(true)
-                    .open(&self.options.canvas_temp_path);
+                    .open(&self.config.canvas_temp_path);
                 
                 match temp_file {
                     Ok(mut temp_file) => {
                         temp_file.write(updated_canvas.to_string().as_bytes())?;
 
-                        fs::remove_file(&self.options.canvas_path)?;
+                        fs::remove_file(&self.config.canvas_path)?;
                         fs::rename(
-                            &self.options.canvas_temp_path, 
-                            &self.options.canvas_path
+                            &self.config.canvas_temp_path, 
+                            &self.config.canvas_path
                         )?;
                         Ok(updated_canvas)
                     },
@@ -92,6 +92,12 @@ impl DrawingApplication {
             },
             Err(e) => Err(e),
         }
+    }
+
+    /// Returns application configuration
+    /// Useful for knowing the blank_character, width and height
+    pub fn get_config(&self) -> ApplicationOptions {
+        self.config.clone()
     }
 }
 /// Given a previous canvas and a draw command, return a new updated canvas state

@@ -6,13 +6,15 @@ use super::super::super::drawing_app::{canvas};
 pub struct DrawRectangleOperation {
     pub position: canvas::Point,
     pub dimensions: canvas::Dimensions,
-    pub fill_character: char,
-    pub outline_character: char,
+    pub fill_character: String,
+    pub outline_character: String,
 }
+
+pub const NONE_CHARACTER: &'static str = "none";
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 /// Request data structure expected on the floor fill route
 pub struct FloodFillOperation {
     pub position: canvas::Point,
-    pub fill_character: char,
+    pub fill_character: String,
 }
