@@ -5,6 +5,7 @@ use std::io::prelude::*;
 use super::commands::CommandName;
 use super::operations;
 
+#[derive(Clone)]
 pub struct ApplicationOptions {
     pub width: i32,
     pub height: i32,
@@ -13,6 +14,7 @@ pub struct ApplicationOptions {
     pub canvas_temp_path: String,
 }
 
+#[derive(Clone)]
 pub struct DrawingApplication {
     options: ApplicationOptions,
 }
@@ -112,7 +114,7 @@ pub fn apply_draw_commands(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use drawing_app::{commands, canvas};
+    use super::super::{commands, canvas};
 
     #[test]
     fn test_apply_draw_command() {

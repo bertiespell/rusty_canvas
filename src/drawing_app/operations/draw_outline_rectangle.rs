@@ -31,11 +31,11 @@ fn draw_outline(
     previous_state_canvas.pixels
         .iter()
         .enumerate()
-        .map(|(row_index, row)| {
+        .for_each(|(row_index, row)| {
             row
                 .iter()
                 .enumerate()
-                .map(|(column_index, _)| {
+                .for_each(|(column_index, _)| {
                     if utils::is_edge(
                         dimensions,
                         &command.position, 
@@ -45,9 +45,7 @@ fn draw_outline(
                         new_canvas.pixels[row_index][column_index] = command.character;
                     }
                 })
-                .collect::<Vec<_>>()
-        })
-        .collect::<Vec<_>>();
+        });
 
         new_canvas
 }
@@ -55,7 +53,7 @@ fn draw_outline(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use drawing_app::{commands, canvas};
+    use super::super::super::{commands, canvas};
 
     #[test]
     fn test_simple_outline() {

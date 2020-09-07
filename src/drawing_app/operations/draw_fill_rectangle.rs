@@ -31,11 +31,11 @@ fn fill_rectangle(
     previous_state_canvas.pixels
         .iter()
         .enumerate()
-        .map(|(row_index, row)| {
+        .for_each(|(row_index, row)| {
             row
                 .iter()
                 .enumerate()
-                .map(|(column_index, pixel)| {
+                .for_each(|(column_index, pixel)| {
                     if pixel_should_change(
                         &dimensions,
                         &command.position, 
@@ -47,9 +47,7 @@ fn fill_rectangle(
                         new_canvas.pixels[row_index][column_index] = pixel.clone()
                     }
                 })
-                .collect::<Vec<_>>()
-        })
-        .collect::<Vec<_>>();
+        });
 
         new_canvas
 }
@@ -68,7 +66,7 @@ fn pixel_should_change(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use drawing_app::{commands, canvas};
+    use super::super::super::{commands, canvas};
 
     #[test]
     fn test_simple_draw_fill() {

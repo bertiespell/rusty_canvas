@@ -74,7 +74,7 @@ pub fn flood_fill(
 mod tests {
     use super::*;
     use super::super::{draw_fill_rectangle, draw_outline_rectangle};
-    use drawing_app::{commands, canvas};
+    use super::super::super::{commands, canvas};
 
     #[test]
     fn test_simple_flood_fill_operation() {
