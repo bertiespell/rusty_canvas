@@ -3,9 +3,10 @@ use std::sync::Arc;
 
 use super::super::super::drawing_app::{application, commands};
 use super::utils;
+use super::request;
 
 pub async fn handle_draw_rectangle_operation(
-    command: utils::DrawRectangleOperation,
+    command: request::DrawRectangleOperation,
     app: Arc<RwLock<application::DrawingApplication>>,
 ) -> Result<impl warp::Reply, warp::Rejection> {
     let fill_rectangle_command = commands::DrawCommand {
@@ -23,23 +24,4 @@ pub async fn handle_draw_rectangle_operation(
     };
 
     utils::apply_draw_operation(vec!(fill_rectangle_command, outline_rectangle_command), app)
-}
-
-#[cfg(test)]
-mod tests {
-
-    #[tokio::test]
-    async fn handle_draw_operation() {
-        //TODO: test that the handlers work as expected. 
-        // let mut response;
-        // let res = warp::test::request()
-        //     .method("POST")
-        //     .path("fillrectangle")
-        //     .reply() 
-        //     .await;
-
-        // assert_eq!(res.status(), 200, "Should return 200 OK.");
-
-        // println!("{:#?}", res.body());
-    }
 }

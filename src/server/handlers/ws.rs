@@ -2,6 +2,7 @@ use parking_lot::RwLock;
 use std::sync::Arc;
 
 use super::super::super::drawing_app::{application};
+use super::errors;
 use super::utils;
 
 pub async fn ws_handler(
@@ -9,10 +10,14 @@ pub async fn ws_handler(
     app: Arc<RwLock<application::DrawingApplication>>
 ) -> Result<impl warp::Reply, warp::Rejection> {
     let canvas = app.write().draw(vec!());
-    let html_string = utils::construct_html_with_canvas(&canvas.unwrap());
-
-    Ok(warp::reply::with_status(
-        html_string,
-        http::StatusCode::from_u16(101).unwrap(),
-    ))
+    match canvas {
+        Ok(canvas) => {
+            let html_string = utils::construct_html_with_canvas(&canvas);
+            Ok(warp::reply::with_status(
+                html_string,
+                http::StatusCode::from_u16(101).unwrap(),
+            ))
+        },
+        Err(_) => Err(warp::reject::custom(errors::ApplyOperationError))
+    }
 }

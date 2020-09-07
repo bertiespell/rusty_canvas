@@ -1,9 +1,10 @@
 use std::sync::Arc;
-use serde::{Deserialize, Serialize};
 use warp::{Filter};
 use parking_lot::RwLock;
 
 use super::super::super::drawing_app::{application, canvas, commands};
+use super::errors;
+use super::request;
 
 pub fn apply_draw_operation(
     command: Vec<commands::DrawCommand>,
@@ -20,10 +21,18 @@ pub fn apply_draw_operation(
                 http::StatusCode::CREATED,
             ))
         },
-        Err(_) => {
-            Err(warp::reject())
-        }
+        Err(_) => Err(warp::reject::custom(errors::ApplyOperationError))
     }
+}
+
+/// Check that the body is JSON and marshalls into correct format (and reject huge payloads)
+pub fn parse_draw_rectangle_request() -> impl Filter<Extract = (request::DrawRectangleOperation,), Error = warp::Rejection> + Clone {
+    warp::body::content_length_limit(1024 * 16).and(warp::body::json())
+}
+
+/// Check that the body is JSON and marshalls into correct format (and reject huge payloads)
+pub fn parse_flood_fill_request() -> impl Filter<Extract = (request::FloodFillOperation,), Error = warp::Rejection> + Clone {
+    warp::body::content_length_limit(1024 * 16).and(warp::body::json())
 }
 
 pub fn construct_html_with_canvas(canvas: &canvas::Canvas) -> String {
@@ -62,28 +71,4 @@ pub fn convert_canvas_to_html(canvas: &canvas::Canvas) -> String {
             html_string
         })
         .fold(String::new(), |a, b| a + &b + "\n")
-}
-
-/// Check that the body is JSON and marshalls into correct format (and reject huge payloads)
-pub fn draw_rectangle_json_body() -> impl Filter<Extract = (DrawRectangleOperation,), Error = warp::Rejection> + Clone {
-    warp::body::content_length_limit(1024 * 16).and(warp::body::json())
-}
-
-/// Check that the body is JSON and marshalls into correct format (and reject huge payloads)
-pub fn flood_fill_json_body() -> impl Filter<Extract = (FloodFillOperation,), Error = warp::Rejection> + Clone {
-    warp::body::content_length_limit(1024 * 16).and(warp::body::json())
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct DrawRectangleOperation {
-    pub position: canvas::Point,
-    pub dimensions: canvas::Dimensions,
-    pub fill_character: char,
-    pub outline_character: char,
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct FloodFillOperation {
-    pub position: canvas::Point,
-    pub fill_character: char,
 }

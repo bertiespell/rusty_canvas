@@ -3,9 +3,10 @@ use std::sync::Arc;
 
 use super::super::super::drawing_app::{application, commands};
 use super::utils;
+use super::request;
 
 pub async fn handle_flood_fill_operation(
-    command: utils::FloodFillOperation,
+    command: request::FloodFillOperation,
     app: Arc<RwLock<application::DrawingApplication>>,
 ) -> Result<impl warp::Reply, warp::Rejection> {
     let flood_fill_command = commands::DrawCommand {

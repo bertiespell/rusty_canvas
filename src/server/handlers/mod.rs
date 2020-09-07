@@ -3,3 +3,5 @@ pub mod flood_fill;
 pub mod get_canvas;
 pub mod ws;
 pub mod utils;
+mod request;
+mod errors;
