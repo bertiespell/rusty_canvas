@@ -1,27 +1,30 @@
 mod server;
 mod drawing_app;
+mod config;
 
-use parking_lot::RwLock;
+use std::process;
+use std::env;
 use std::sync::Arc;
+use parking_lot::RwLock;
+
+use config::Config;
 use drawing_app::{application};
 use server::{server as serverApp};
 
-// TODO: configure via env variables or command line arguments
-const CANVAS: &'static str = "canvas_data.txt";
-const TEMP_CANVAS: &'static str = "temp_canvas_data.txt";
-const CANVAS_WIDTH: i32 = 10;
-const CANVAS_HEIGHT: i32 = 10;
-const BLANK_CHARACTER: char = '⬛';
-
 #[tokio::main]
 async fn main() {
+    let config = Config::new(env::args()).unwrap_or_else(|err| {
+        eprintln!("Problem parsing arguments: {}", err);
+        process::exit(1);
+    });
+
     let app = Arc::new(RwLock::new(application::DrawingApplication::initialize(
         application::ApplicationOptions {
-            width: CANVAS_WIDTH,
-            height: CANVAS_HEIGHT,
-            blank_character: BLANK_CHARACTER,
-            canvas_path: String::from(CANVAS),
-            canvas_temp_path: String::from(TEMP_CANVAS),
+            width: config.width,
+            height: config.height,
+            blank_character: config.blank_character,
+            canvas_path: config.canvas_location,
+            canvas_temp_path: config.temp_canvas_location,
         }
     )));
 
