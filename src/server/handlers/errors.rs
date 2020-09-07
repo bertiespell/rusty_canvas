@@ -9,8 +9,8 @@ pub struct ApplyOperationError;
 pub struct CharacterTooLong;
 #[derive(Debug)]
 /// Error returned when a draw operation is not succesful
-pub struct CharacterDecodeError;
+pub struct StringTooLong;
 
 impl Reject for CharacterTooLong {}
 impl Reject for ApplyOperationError {}
-impl Reject for CharacterDecodeError {}
+impl Reject for StringTooLong {}

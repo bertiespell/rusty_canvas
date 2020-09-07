@@ -40,25 +40,23 @@ pub fn parse_flood_fill_request() -> impl Filter<Extract = (request::FloodFillOp
 }
 
 /// Parse the operation's outline or fill character
-/// Matches against either "none", or a single character
-/// Converts "none" to the canvas' blank character
-pub fn parse_character(
-    request_character: String,
-    blank_character: char,
-) -> Result<char, warp::Rejection> {
-    let fill_string = request_character.to_ascii_lowercase();
+/// Checks whether this is specified as none
+pub fn field_is_not_none(field: &str) -> bool {
+    field.to_ascii_lowercase() != request::NONE_CHARACTER
+}
 
-    match fill_string {
-        fill_string if fill_string == request::NONE_CHARACTER.to_owned() => Ok(blank_character),
-        _ => {
-            if fill_string.len() > 1 {
-                return Err(warp::reject::custom(errors::CharacterTooLong));
-            }
-            match request_character.chars().next() {
-                Some(fill_char) => Ok(fill_char),
-                None => Err(warp::reject::custom(errors::CharacterDecodeError)),
-            }
-        }
+/// Parse the operation's outline or fill character
+/// Checks that it is a single valid unicode character
+pub fn valid_character(field: &str) -> Result<char, warp::Rejection> {
+    match field.chars().take(1).next() {
+        Some(character) => {
+            if field.chars().count() == 1 {
+                return Ok(character);
+            } 
+            
+            return Err(warp::reject::custom(super::errors::CharacterTooLong));
+        },
+        _ => Err(warp::reject::custom(super::errors::StringTooLong)),
     }
 }
 
@@ -87,7 +85,7 @@ pub fn construct_html_with_canvas(canvas: &canvas::Canvas) -> String {
         <!DOCTYPE html>
         <html lang=\"en\">
             <head>
-                <title>HTML with warp!</title>
+                <title>Rusty Canvas!</title>
             </head>
         <body>"
     );

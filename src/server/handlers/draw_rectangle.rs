@@ -6,51 +6,49 @@ use super::utils;
 use super::request;
 
 /// Handler for the draw rectangle route
-/// Takes a valid request and transforms this into a draw operation
-/// It then attempts to draw to canvas and returns the result
+/// Takes a valid request and transforms this into valid draw operations
+/// Attempts to draw to canvas and returns the result
 pub async fn handle_draw_rectangle_request(
     request: request::DrawRectangleOperation,
     app: Arc<RwLock<application::DrawingApplication>>,
 ) -> Result<impl warp::Reply, warp::Rejection> {
-    let request_fill_character = request.fill_character;
-    let request_outline_character = request.outline_character;
-    let blank_character = app.write().get_config().blank_character;
+    let mut commands = vec!();
 
-    let parsed_fill_character;
-    match utils::parse_character(request_fill_character, blank_character) {
-        Ok(fill_character) => {
-            parsed_fill_character = fill_character;
-        },
-        Err(e) => {
-            return Err(e);
-        },
+    if utils::field_is_not_none(&request.fill_character) {
+        match utils::valid_character(&request.fill_character) {
+            Ok(character) => {
+                let fill_rectangle_command = commands::DrawCommand {
+                    name: commands::CommandName::FillRectangle,
+                    position: request.position.clone(),
+                    dimensions: Some(request.dimensions.clone()),
+                    character,
+                };
+        
+                commands.push(fill_rectangle_command);
+            },
+            _ => return Err(warp::reject::custom(super::errors::StringTooLong)),
+        }
     }
 
-    let parsed_outline_character;
-    match utils::parse_character(request_outline_character, blank_character) {
-        Ok(fill_character) => {
-            parsed_outline_character = fill_character;
-        },
-        Err(e) => {
-            return Err(e);
-        },
+    if utils::field_is_not_none(&request.outline_character) {
+        match utils::valid_character(&request.outline_character) {
+            Ok(character) => {
+                let outline_rectangle_command = commands::DrawCommand {
+                    name: commands::CommandName::OutlineRectangle,
+                    position: request.position,
+                    dimensions: Some(request.dimensions),
+                    character,
+                };
+        
+                commands.push(outline_rectangle_command);
+            },
+            _ => {
+                return Err(warp::reject::custom(super::errors::StringTooLong))
+            },
+        }
     }
 
-    let fill_rectangle_command = commands::DrawCommand {
-        name: commands::CommandName::FillRectangle,
-        position: request.position.clone(),
-        dimensions: Some(request.dimensions.clone()),
-        character: parsed_fill_character,
-    };
-
-    let outline_rectangle_command = commands::DrawCommand {
-        name: commands::CommandName::OutlineRectangle,
-        position: request.position,
-        dimensions: Some(request.dimensions),
-        character: parsed_outline_character,
-    };
-
-    utils::apply_draw_operation(vec!(fill_rectangle_command, outline_rectangle_command), app)
+    utils::apply_draw_operation(commands, app)
 }
 
 #[cfg(test)]
@@ -303,6 +301,144 @@ mod tests {
         let actual = app
             .write()
             .draw(vec!());
+        
+        assert_eq!(expected, actual.unwrap().to_string());
+
+        // clean up
+        if Path::new(&canvas_location).exists() {
+            fs::remove_file(&canvas_location).unwrap();
+        }
+        if Path::new(&temp_canvas_location).exists() {
+            fs::remove_file(&temp_canvas_location).unwrap();
+        }
+    }
+
+    #[tokio::test]
+    async fn test_should_only_outline() {
+        let canvas_location = Uuid::new_v4().to_string();
+        let temp_canvas_location = Uuid::new_v4().to_string();
+
+        let app = Arc::new(RwLock::new(application::DrawingApplication::initialize(
+            application::ApplicationOptions {
+                width: 21,
+                height: 8,
+                blank_character: ' ',
+                canvas_path: canvas_location.clone(),
+                canvas_temp_path: temp_canvas_location.clone(),
+            }
+        )));
+        
+        // ensure our test files are empty
+        if Path::new(&canvas_location).exists() {
+            fs::remove_file(&canvas_location).unwrap();
+        }
+        if Path::new(&temp_canvas_location).exists() {
+            fs::remove_file(&temp_canvas_location).unwrap();
+        }
+
+        let request_one = request::DrawRectangleOperation {
+            position: canvas::Point {
+                x: 0,
+                y: 0
+            },
+            dimensions: canvas::Dimensions {
+                width: 14,
+                height: 14,
+            },
+            fill_character: String::from('9'),
+            outline_character: String::from("none"),
+        };
+
+        let request_two = request::DrawRectangleOperation {
+            position: canvas::Point {
+                x: 3,
+                y: 3
+            },
+            dimensions: canvas::Dimensions {
+                width: 4,
+                height: 4,
+            },
+            fill_character: String::from("NoNe"),
+            outline_character: String::from('O'),
+        };
+
+        let expected = "99999999999999       \n99999999999999       \n99999999999999       \n999OOOO9999999       \n999O99O9999999       \n999O99O9999999       \n999OOOO9999999       \n99999999999999       \n";
+
+        handle_draw_rectangle_request(request_one, app.clone()).await.unwrap();
+        handle_draw_rectangle_request(request_two, app.clone()).await.unwrap();
+        
+        let actual = app
+        .write()
+        .draw(vec!());
+        
+        assert_eq!(expected, actual.unwrap().to_string());
+
+        // clean up
+        if Path::new(&canvas_location).exists() {
+            fs::remove_file(&canvas_location).unwrap();
+        }
+        if Path::new(&temp_canvas_location).exists() {
+            fs::remove_file(&temp_canvas_location).unwrap();
+        }
+    }
+
+    #[tokio::test]
+    async fn test_should_only_fill() {
+        let canvas_location = Uuid::new_v4().to_string();
+        let temp_canvas_location = Uuid::new_v4().to_string();
+
+        let app = Arc::new(RwLock::new(application::DrawingApplication::initialize(
+            application::ApplicationOptions {
+                width: 21,
+                height: 8,
+                blank_character: ' ',
+                canvas_path: canvas_location.clone(),
+                canvas_temp_path: temp_canvas_location.clone(),
+            }
+        )));
+        
+        // ensure our test files are empty
+        if Path::new(&canvas_location).exists() {
+            fs::remove_file(&canvas_location).unwrap();
+        }
+        if Path::new(&temp_canvas_location).exists() {
+            fs::remove_file(&temp_canvas_location).unwrap();
+        }
+
+        let request_one = request::DrawRectangleOperation {
+            position: canvas::Point {
+                x: 0,
+                y: 0
+            },
+            dimensions: canvas::Dimensions {
+                width: 14,
+                height: 14,
+            },
+            fill_character: String::from('9'),
+            outline_character: String::from("none"),
+        };
+
+        let request_two = request::DrawRectangleOperation {
+            position: canvas::Point {
+                x: 3,
+                y: 3
+            },
+            dimensions: canvas::Dimensions {
+                width: 4,
+                height: 4,
+            },
+            fill_character: String::from('0'),
+            outline_character: String::from("NoNe"),
+        };
+
+        let expected = "99999999999999       \n99999999999999       \n99999999999999       \n99900009999999       \n99900009999999       \n99900009999999       \n99900009999999       \n99999999999999       \n";
+
+        handle_draw_rectangle_request(request_one, app.clone()).await.unwrap();
+        handle_draw_rectangle_request(request_two, app.clone()).await.unwrap();
+        
+        let actual = app
+        .write()
+        .draw(vec!());
         
         assert_eq!(expected, actual.unwrap().to_string());
 

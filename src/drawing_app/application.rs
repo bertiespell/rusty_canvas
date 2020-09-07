@@ -93,12 +93,6 @@ impl DrawingApplication {
             Err(e) => Err(e),
         }
     }
-
-    /// Returns application configuration
-    /// Useful for knowing the blank_character, width and height
-    pub fn get_config(&self) -> ApplicationOptions {
-        self.config.clone()
-    }
 }
 /// Given a previous canvas and a draw command, return a new updated canvas state
 /// Folds over a set of commands, returning a new canvas each time
