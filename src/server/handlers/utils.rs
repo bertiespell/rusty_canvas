@@ -54,7 +54,7 @@ pub fn convert_canvas_to_html(canvas: &canvas::Canvas) -> String {
         })
         .fold(String::new(), |a, b| a + &b + "\n");
 
-    format!("{}{}{}","<div class=\"canvas\"", canvas_element, "</div>")
+    format!("{}{}{}","<div class=\"canvas\">", canvas_element, "</div>")
 }
 
 /// Constructs a basic HTML document containing the canvas
