@@ -73,4 +73,20 @@ mod tests {
 
         assert_eq!(expected, actual);
     }
+
+    #[test]
+    fn test_from_chars() {
+        let canvas_string = "              .......\n              .......\n              .......\nOOOOOOOO      .......\nO      O      .......\nO    XXXXX    .......\nOOOOOXXXXX           \n     XXXXX           \n";
+        let chars = canvas_string
+            .lines()
+            .map(|line| {
+                line
+                    .chars()
+                    .collect()
+            })
+            .collect();
+        let actual = canvas::Canvas::from_chars(chars, 21, 8).to_string();
+
+        assert_eq!(canvas_string, actual);
+    }
 }
