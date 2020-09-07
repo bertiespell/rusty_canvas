@@ -5,6 +5,9 @@ use super::super::super::drawing_app::{application, commands};
 use super::utils;
 use super::request;
 
+/// Handler for the draw rectangle route
+/// Takes a valid request and transforms this into a draw operation
+/// It then attempts to draw to canvas and returns the result
 pub async fn handle_draw_rectangle_operation(
     command: request::DrawRectangleOperation,
     app: Arc<RwLock<application::DrawingApplication>>,

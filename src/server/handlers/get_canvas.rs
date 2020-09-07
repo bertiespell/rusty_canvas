@@ -5,6 +5,8 @@ use super::super::super::drawing_app::{application};
 use super::utils;
 use super::errors;
 
+/// Handler for the main canvas route
+/// Returns the canvas
 pub async fn handle_get_canvas(
     app: Arc<RwLock<application::DrawingApplication>>
 ) -> Result<impl warp::Reply, warp::Rejection> {

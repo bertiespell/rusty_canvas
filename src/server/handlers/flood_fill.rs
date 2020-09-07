@@ -5,6 +5,9 @@ use super::super::super::drawing_app::{application, commands};
 use super::utils;
 use super::request;
 
+/// Handler for the flood fill route
+/// Takes a valid request and transforms this into a draw operation
+/// It then attempts to draw to canvas and returns the result
 pub async fn handle_flood_fill_operation(
     command: request::FloodFillOperation,
     app: Arc<RwLock<application::DrawingApplication>>,

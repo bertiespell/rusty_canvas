@@ -5,6 +5,8 @@ use super::super::super::drawing_app::{application};
 use super::errors;
 use super::utils;
 
+/// Skeleton for web socker handler
+/// TODO: finish implementation
 pub async fn ws_handler(
     _ws: warp::ws::Ws, 
     app: Arc<RwLock<application::DrawingApplication>>
