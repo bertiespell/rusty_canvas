@@ -106,7 +106,7 @@ pub fn apply_draw_commands(
             match command.name {
                 CommandName::FillRectangle => operations::draw_fill_rectangle::execute(&previous_canvas, command),
                 CommandName::OutlineRectangle => operations::draw_outline_rectangle::execute(&previous_canvas, command),
-                CommandName::FloodFill => operations::draw_flood_fill_rectangle::execute(&previous_canvas, command),
+                CommandName::FloodFill => operations::draw_flood_fill::execute(&previous_canvas, command),
             }
         })
 }
