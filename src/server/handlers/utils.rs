@@ -61,7 +61,8 @@ pub fn convert_canvas_to_html(canvas: &canvas::Canvas) -> String {
 /// Contains basic web socket initialisation scripts 
 pub fn construct_html_with_canvas(canvas: &canvas::Canvas) -> String {
     let start_tags: String = String::from("
-        <html>
+        <!DOCTYPE html>
+        <html lang=\"en\">
             <head>
                 <title>HTML with warp!</title>
             </head>
