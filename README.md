@@ -5,7 +5,7 @@ It supports ASCII and Unicode.
 
 ## Building from source
 
-You'll first need to install Rust - following instructions found [here](https://www.rust-lang.org/tools/install).
+You'll first need to install Rust (1.46.X) - following instructions found [here](https://www.rust-lang.org/tools/install).
 
 To run the project:
 ```bash
