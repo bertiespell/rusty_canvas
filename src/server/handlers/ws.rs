@@ -1,5 +1,6 @@
 use parking_lot::RwLock;
 use std::sync::Arc;
+use warp::http::StatusCode;
 
 use super::super::super::drawing_app::{application};
 use super::errors;
@@ -17,7 +18,7 @@ pub async fn ws_handler(
             let html_string = utils::construct_html_with_canvas(&canvas);
             Ok(warp::reply::with_status(
                 html_string,
-                http::StatusCode::SWITCHING_PROTOCOLS,
+                StatusCode::SWITCHING_PROTOCOLS,
             ))
         },
         Err(_) => Err(warp::reject::custom(errors::ApplyOperationError))

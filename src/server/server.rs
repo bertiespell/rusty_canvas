@@ -35,7 +35,8 @@ pub async fn run(app: Arc<RwLock<application::DrawingApplication>>) {
     let routes = fill_rectangle
         .or(flood_fill)
         .or(get_canvas)
-        .or(ws_route);
+        .or(ws_route)
+        .recover(handlers::handle_rejections::handle_rejection);
 
     warp::serve(routes)
         .run(([127, 0, 0, 1], 8080))

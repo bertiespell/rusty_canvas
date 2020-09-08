@@ -1,6 +1,7 @@
 use std::sync::Arc;
 use warp::{Filter};
 use parking_lot::RwLock;
+use warp::http::StatusCode;
 
 use super::super::super::drawing_app::{application, canvas, commands};
 use super::errors;
@@ -20,7 +21,7 @@ pub fn apply_draw_operation(
         Ok(canvas) => {
             Ok(warp::reply::with_status(
                 canvas.to_string(),
-                http::StatusCode::OK,
+                StatusCode::OK,
             ))
         },
         Err(_) => Err(warp::reject::custom(errors::ApplyOperationError))
@@ -54,7 +55,7 @@ pub fn valid_character(field: &str) -> Result<char, warp::Rejection> {
                 return Ok(character);
             } 
             
-            return Err(warp::reject::custom(super::errors::CharacterTooLong));
+            return Err(warp::reject::custom(super::errors::StringTooLong));
         },
         _ => Err(warp::reject::custom(super::errors::StringTooLong)),
     }

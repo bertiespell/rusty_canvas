@@ -77,7 +77,7 @@ curl --location --request POST 'localhost:8080/floodfill' \
 }'
 ```
 
-### Canvas Options
+## Canvas Options
 
 The canvas defaults to a size of 30 x 30, with "⬛" as the blank character.
 You can change this by passing in width, height and blank_character arguments to cargo run.
@@ -88,4 +88,10 @@ cargo run 20 30 🟪
 ```
 The above creates a new canvas with width = 20, height = 30 and 🟪 as the blank character.
 
-The canvas is stored locally in `canvas_data.txt`.
+## Viewing the canvas
+
+The canvas is statically hosted at [localhost:8080](`localhost:8080`) (page refresh currently required).
+
+It is stored locally in `canvas_data.txt`, so you can also view this.
+
+Or it is returned as the body to a succesful POST request.
