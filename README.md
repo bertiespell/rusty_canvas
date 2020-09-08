@@ -1,4 +1,4 @@
-# 🟥🟧🟨🟩🟦🟪🟫⬛⬜ Rusty Canvas ⬜⬛🟫🟪🟦🟩🟨🟧🟥
+# 🟥🟧🟨🟩🟦🟪 Rusty Canvas 🟪🟦🟩🟨🟧🟥
 
 A drawing application and server, built in Rust.
 It supports ASCII and Unicode.
